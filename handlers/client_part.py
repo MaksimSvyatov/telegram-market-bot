@@ -7,7 +7,7 @@ from aiogram.types import ReplyKeyboardRemove
 async def command_start(message : types.Message):
     try:
         await bot.send_message(message.from_user.id, 'Привет. Я market-bot)', reply_markup=kb_client_part)
-        # await message.delete()
+        await message.delete()
     except:
         await message.reply('Напишите боту в ЛС, напишите ему: \nhttps://t.me/Investment_FollowUp_bot')
         
@@ -16,7 +16,7 @@ async def command_shares(message : types.Message):
     try:
         await bot.send_message(message.from_user.id, 'Укажи тикер акции заглавными буквами', reply_markup=kb_client_part)
         # клавиатура останется на месте
-        # await message.delete()
+        await message.delete()
     except:
         await message.reply('Напишите боту в ЛС, напишите ему: \nhttps://t.me/Investment_FollowUp_bot')
 
@@ -25,7 +25,7 @@ async def command_bonds(message : types.Message):
     try:
         await bot.send_message(message.from_user.id, 'Укажи тикер облигации заглавными буквами', reply_markup=ReplyKeyboardRemove())
         # клавиатура после срабатывания хэндлера удалится безвозвратно
-        # await message.delete()
+        await message.delete()
     except:
         await message.reply('Напишите боту в ЛС, напишите ему: \nhttps://t.me/Investment_FollowUp_bot')
         
