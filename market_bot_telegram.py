@@ -1,5 +1,6 @@
 from aiogram.utils import executor
-from create_bot import dp 
+from create_bot import dp
+# import keyboards.client_part_kb as nav
 
 async def on_startup(_):
     print('Bot is online')

@@ -1,1 +1,1 @@
-from keyboards.client_part_kb import kb_client_part
+from keyboards.client_part_kb import main_menu_kb_client_part, share_current_price_menu_kb_client_part
