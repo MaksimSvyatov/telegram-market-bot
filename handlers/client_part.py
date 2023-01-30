@@ -50,7 +50,7 @@ async def bot_message(message : types.Message):
                     # data = requests.get('https://iss.moex.com/iss/engines/stock/markets/shares/boards/FQBR/securities/AAPL-RM.json').text
             data = requests.get(f'https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{message.text}.json').text
             # print(type(data))
-            # print(data)
+            print(data)
             data = json.loads(data)
             # print(type(data))
             # print(len(data))
@@ -67,6 +67,24 @@ async def bot_message(message : types.Message):
             await bot.send_message(message.from_user.id,f'Current share price is {share_current_price}')
         else:
             
+            data = requests.get(f'https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{message.text}.json').text
+            # print(type(data))
+            # print(data)
+            data = json.loads(data)
+            # print(type(data))
+            print('11111', data)
+            bond_current_price_index = data['marketdata']['columns'].index('LCURRENTPRICE')
+            
+            # share_endday_price_index = data['marketdata']['columns'].index('LCLOSEPRICE')
+            # print(len(data['marketdata']['columns']))
+            # print(len(data['marketdata']['data']))
+            data_list = data['marketdata']['data'][0]
+            bond_current_price = data_list[bond_current_price_index]
+            print('Текущая цена облигации сейчас', bond_current_price, 'р.')
+            # print(len(data_list))
+            # return share_current_price
+            # print('Сейчас цена такая-то')
+            await bot.send_message(message.from_user.id,f'Current bond price is {bond_current_price}')
 
 # @dp.message_handler()
 # async def get_user_share_ticket(message):
