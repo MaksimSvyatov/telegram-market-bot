@@ -1,8 +1,8 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
-from keyboards import client_part_kb
-from aiogram.types import ReplyKeyboardRemove
-import keyboards.client_part_kb as nav
+# from keyboards import client_part_kb
+# from aiogram.types import ReplyKeyboardRemove
+# import keyboards.client_part_kb as nav
 import requests
 import json
 
@@ -16,7 +16,7 @@ async def command_start(message : types.Message):
     except:
         await message.reply('Напишите боту в ЛС, напишите ему: \nhttps://t.me/Investment_FollowUp_bot')
         
-@dp.message_handler()
+# @dp.message_handler()
 async def bot_message(message : types.Message):
     #await bot.send_message(message.from_user.id, message.text)
     # if message.text == 'Акции':
@@ -33,12 +33,20 @@ async def bot_message(message : types.Message):
             share_current_price = data_list[share_current_price_index]
             await bot.send_message(message.from_user.id,f'Current share price is {share_current_price}')
         else:
-            data = requests.get(f'https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{message.text}.json').text
-            data = json.loads(data)
-            bond_current_price_index = data['marketdata']['columns'].index('LCURRENTPRICE')
-            data_list = data['marketdata']['data'][0]
-            bond_current_price = data_list[bond_current_price_index]
-            await bot.send_message(message.from_user.id,f'Current bond price is {bond_current_price}')
+            if message.text[0] == 'S':
+                data = requests.get(f'https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{message.text}.json').text
+                data = json.loads(data)
+                bond_current_price_index = data['marketdata']['columns'].index('LCURRENTPRICE')
+                data_list = data['marketdata']['data'][0]
+                bond_current_price = data_list[bond_current_price_index]
+                await bot.send_message(message.from_user.id,f'Current bond price is {bond_current_price}')
+            else:
+                data = requests.get(f'https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{message.text}.json').text
+                data = json.loads(data)
+                bond_current_price_index = data['marketdata']['columns'].index('LCURRENTPRICE')
+                data_list = data['marketdata']['data'][0]
+                bond_current_price = data_list[bond_current_price_index]
+                await bot.send_message(message.from_user.id,f'Current bond price is {bond_current_price}')
 
        
 # @dp.message_handler(commands=['Акции'])
@@ -68,5 +76,6 @@ async def bot_message(message : types.Message):
         
 def register_handlers_client(dp : Dispatcher):
     dp.register_message_handler(command_start, commands=['start', 'help'])
+    dp.register_message_handler(bot_message)
     # dp.register_message_handler(command_shares, commands=['Акции'])
     # dp.register_message_handler(command_bonds, commands=['Облигации'])
