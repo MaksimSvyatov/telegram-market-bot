@@ -1,16 +1,20 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
 import keyboards.client_part_kb as nav
+from aiogram.types import ReplyKeyboardRemove
 import requests
 import json
 
 
-@dp.message_handler(commands=["start", "help"])
+# @dp.message_handler(commands=["start", "help"])
 async def command_start(message: types.Message):
+    ticker = ''
+    url = ''
     try:
         await bot.send_message(
             message.from_user.id,
             "Привет. Я market-bot). Ведите тикер акции или облигации для получения информации",
+            reply_markup = ReplyKeyboardRemove()
         )
     except:
         await message.reply(
@@ -25,8 +29,9 @@ async def bot_message(message: types.Message):
     if len(message.text) <= 6:
         ticker = message.text
         data = requests.get(
-            f"https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{message.text}.json"
+            f"https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}.json"
         ).text
+        url = f'https://www.moex.com/en/issue.aspx?board=TQBR&code={ticker}'
         data = json.loads(data)
         share_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
         data_list = data["marketdata"]["data"][0]
@@ -34,13 +39,15 @@ async def bot_message(message: types.Message):
         await bot.send_message(
             message.from_user.id,
             f"Current share price is {share_current_price}",
-            reply_markup=nav.get_additional_info(ticker))
-
+            reply_markup=nav.get_additional_info(ticker,url)
+        )
+        
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
+            user_id = message.chat.id
             additional_share_data = requests.get(
-                f"https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}.json"
-            ).text
+            f"https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}.json"
+        ).text
             data = json.loads(additional_share_data)
             share_name_index = data["securities"]["columns"].index("SECNAME")
             data_list = data["securities"]["data"][0]
@@ -51,25 +58,31 @@ async def bot_message(message: types.Message):
             share_max_price_index = data["marketdata"]["columns"].index("HIGH")
             data_list = data["marketdata"]["data"][0]
             share_max_price = data_list[share_max_price_index]
+            print(user_id)
             await bot.send_message(
-                message.from_user.id,
-                f"Share name: {share_name}, Min price: {share_min_price}, Max price: {share_max_price}",
+                chat_id=user_id, text = f"Share name: {share_name}, Min price: {share_min_price}, Max price: {share_max_price}"
             )
             await callback.answer()
-
+            
+        @dp.callback_query_handler(text=f"get_link_for_{ticker}")
+        async def get_add_info(callback: types.CallbackQuery):
+            # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
+            await callback.answer()
+            
     if message.text.startswith("SU"):
-        data = requests.get(
-            f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{message.text}.json"
-        ).text
-        data = json.loads(data)
         ticker = message.text
+        data = requests.get(
+            f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{ticker}.json"
+        ).text
+        url = f'https://www.moex.com/ru/issue.aspx?code={ticker}'
+        data = json.loads(data)
         bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
         data_list = data["marketdata"]["data"][0]
         bond_current_price = data_list[bond_current_price_index]
         await bot.send_message(
             message.from_user.id,
             f"Current bond price is {bond_current_price}",
-            reply_markup=nav.get_additional_info(ticker),
+            reply_markup=nav.get_additional_info(ticker,url)
         )
 
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
@@ -77,6 +90,7 @@ async def bot_message(message: types.Message):
             additional_bondSU_data = requests.get(
                 f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{ticker}.json"
             ).text
+            
             data = json.loads(additional_bondSU_data)
             bond_name_index = data["securities"]["columns"].index("SECNAME")
             data_list = data["securities"]["data"][0]
@@ -92,11 +106,18 @@ async def bot_message(message: types.Message):
                 f"Bond name: {bond_name}, Min price: {bond_min_price}, Max price: {bond_max_price}",
             )
             await callback.answer()
+        
+        @dp.callback_query_handler(text=f"get_link_for_{ticker}")
+        async def get_add_info(callback: types.CallbackQuery):
+            # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
+            await callback.answer()
 
     if message.text.startswith("RU"):
+        ticker = message.text
         data = requests.get(
-            f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{message.text}.json"
+            f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{ticker}.json"
         ).text
+        url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
         data = json.loads(data)
         ticker = message.text
         bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
@@ -105,7 +126,7 @@ async def bot_message(message: types.Message):
         await bot.send_message(
             message.from_user.id,
             f"Current bond price is {bond_current_price}",
-            reply_markup=nav.get_additional_info(ticker),
+            reply_markup=nav.get_additional_info(ticker,url)
         )
 
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
@@ -127,6 +148,11 @@ async def bot_message(message: types.Message):
                 message.from_user.id,
                 f"Bond name: {bond_name}, Min price: {bond_min_price}, Max price: {bond_max_price}",
             )
+            await callback.answer()
+            
+        @dp.callback_query_handler(text=f"get_link_for_{ticker}")
+        async def get_add_info(callback: types.CallbackQuery):
+            # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
 
 
