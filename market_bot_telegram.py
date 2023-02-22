@@ -1,6 +1,8 @@
 from aiogram.utils import executor
 from create_bot import dp
 from handlers import client_part
+from data_base import sqlite_db
+
 
 
 async def on_startup(_):
