@@ -4,7 +4,8 @@ import keyboards.client_part_kb as nav
 from aiogram.types import ReplyKeyboardRemove
 import requests
 import json
-
+from data_base import sqlite_db
+from datetime import datetime
 
 # @dp.message_handler(commands=["start", "help"])
 async def command_start(message: types.Message):
@@ -28,6 +29,7 @@ async def bot_message(message: types.Message):
 
     if len(message.text) <= 6:
         ticker = message.text
+        date = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         data = requests.get(
             f"https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}.json"
         ).text
@@ -36,11 +38,15 @@ async def bot_message(message: types.Message):
         share_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
         data_list = data["marketdata"]["data"][0]
         share_current_price = data_list[share_current_price_index]
+        
         await bot.send_message(
             message.from_user.id,
             f"Current share price is {share_current_price}",
             reply_markup=nav.get_additional_info(ticker,url)
         )
+        await sqlite_db.sql_add_command(ticker,date)
+        print(ticker,date)
+        await sqlite_db.sql_read(message)
         
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
@@ -155,7 +161,14 @@ async def bot_message(message: types.Message):
             # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
 
-
+        # await sqlite_db.sql_add_command(ticker)
+        
+@dp.message_handler(commands=['Get stat from data base'])
+async def get_stat_from_data_base(message : types.Message):
+    await sqlite_db.sql_read(message)
+    print('From def')
+    
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(command_start, commands=["start", "help"])
     dp.register_message_handler(bot_message)
+    dp.register_message_handler(get_stat_from_data_base, commands=['Get stat from data base'])

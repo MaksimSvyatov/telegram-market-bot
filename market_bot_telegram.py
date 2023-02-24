@@ -3,10 +3,9 @@ from create_bot import dp
 from handlers import client_part
 from data_base import sqlite_db
 
-
-
 async def on_startup(_):
     print("Bot is online")
+    sqlite_db.sql_start()
 
 client_part.register_handlers_client(dp)
 # admin_part.register_handlers_admin(dp)
