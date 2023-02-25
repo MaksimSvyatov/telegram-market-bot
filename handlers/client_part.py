@@ -6,21 +6,38 @@ import requests
 import json
 from data_base import sqlite_db
 from datetime import datetime
+from handlers import for_regular_info
 
 # @dp.message_handler(commands=["start", "help"])
 async def command_start(message: types.Message):
-    ticker = ''
-    url = ''
     try:
         await bot.send_message(
             message.from_user.id,
             "Привет. Я market-bot). Ведите тикер акции или облигации для получения информации",
             reply_markup = ReplyKeyboardRemove()
         )
+
     except:
         await message.reply(
             "Напишите боту в ЛС, напишите ему: \nhttps://t.me/Investment_FollowUp_bot"
         )
+    # await for_regular_info.get_daily_info(message)
+
+# @dp.message_handler(commands=["start", "help"])
+# async def input_tickers(message: types.Message):
+#     await bot.send_message(
+#             message.from_user.id,
+#             f"Enter tickers with ,"
+#         )
+#     print(message)
+        # async def input_tickers(message: types.Message):
+        #     await bot.send_message(
+        #     message.from_user.id,
+        #     f"Enter tickers with ,"
+        #     )
+        #     print(message.text)
+        # await input_tickers(message)
+
 
 
 # @dp.message_handler()

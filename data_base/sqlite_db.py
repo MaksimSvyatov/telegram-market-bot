@@ -7,7 +7,7 @@ def sql_start():
     cur = base.cursor()
     if base:
         print('Data base connected OK!')
-    base.execute('CREATE TABLE IF NOT EXISTS {}(ticker TEXT PRIMARY KEY, date TEXT)'.format('data'))
+    base.execute('CREATE TABLE IF NOT EXISTS {}(ticker TEXT, date TEXT)'.format('data'))
     base.commit()
         
 async def sql_add_command(ticker,date):
