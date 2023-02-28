@@ -6,7 +6,7 @@ import requests
 import json
 from data_base import sqlite_db
 from datetime import datetime
-from handlers import for_regular_info
+# from handlers import for_regular_info
 
 # @dp.message_handler(commands=["start", "help"])
 async def command_start(message: types.Message):
@@ -61,9 +61,9 @@ async def bot_message(message: types.Message):
             f"Current share price is {share_current_price}",
             reply_markup=nav.get_additional_info(ticker,url)
         )
-        await sqlite_db.sql_add_command(ticker,date)
-        print(ticker,date)
-        await sqlite_db.sql_read(message)
+        # await sqlite_db.sql_add_command(ticker,date)
+        # print(ticker,date)
+        # await sqlite_db.sql_read(message)
         
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):

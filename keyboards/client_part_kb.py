@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def get_additional_info(ticker, url):
     kb_addinfo_button = InlineKeyboardMarkup(row_width=1)
@@ -10,3 +10,6 @@ def get_additional_info(ticker, url):
                                                 url = url)
     kb_addinfo_button.add(additional_info_button).add(link_button)
     return kb_addinfo_button
+
+button_daily_info = KeyboardButton('/Допинфа')
+kb_daily_info = ReplyKeyboardMarkup(resize_keyboard=True).add(button_daily_info)

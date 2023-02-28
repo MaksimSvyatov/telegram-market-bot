@@ -9,7 +9,8 @@ from aiogram import types
 from create_bot import dp, bot
 from aiogram.dispatcher import Dispatcher
 from aiogram.dispatcher.filters import Text
-
+from data_base import sqlite_db
+import keyboards.client_part_kb as nav
 
 tickers_list = []
 
@@ -17,14 +18,23 @@ class FSMAdmin(StatesGroup):
     tickers_names = State()
     periodicity = State()
     time = State()
-    
+ 
 # Начало диалога загрузки нового, например, пункта меню
-@dp.message_handler(commands='dailyinfo', state=None)
+@dp.message_handler(commands=['dailyinfo'])
 async def make_changes_command(message : types.Message):
     global ID
     ID = message.from_user.id
+    await bot.send_message(message.from_user.id, 'What do you want?', reply_markup=nav.kb_daily_info)
+    # await message.delete()
+    
+# Начало диалога
+@dp.message_handler(commands='Допинфа', state=None)
+async def cm_start(message : types.Message):
+    print(message.text)
+    # if message.text == '/Daily_Info':
     await FSMAdmin.tickers_names.set()
-    await message.reply('If you want to get daily info about prices, enter tickers with ,')
+    await message.reply('Write tickers with ,')
+
 
 # Ловим первый ответ
 @dp.message_handler(state = FSMAdmin.tickers_names)
@@ -32,11 +42,11 @@ async def load_tickers_names(message : types.Message, state: FSMContext):
         print(message.text, 'message.text')
         async with state.proxy() as data:
             data['tickers_names'] = message.text
+            # await sqlite_db.sql_add_command(ticker,date)
         await FSMAdmin.next()
         await message.reply('Сколько раз в день?')# если дальше есть какие-то пунткы.
         #Этой строкой переводим бота в ожидание ответ на на следующее состояние 
         # идёт по порядку class FSMAdmin(StatesGroup), ждёт следующее состояние
-
 
 # Ловим второй ответ
 @dp.message_handler(state = FSMAdmin.periodicity)
@@ -55,6 +65,9 @@ async def load_tickers_names(message : types.Message, state: FSMContext):
         print(message.text, 'message.text')
         async with state.proxy() as data:
             data['time'] = message.text
+        # async with state.proxy() as data:
+        #     await message.reply(str(data))
+        await sqlite_db.sql_add_command(state)
         await state.finish()
 
 # Ловим первый ответ админа
@@ -95,8 +108,11 @@ async def get_daily_info(message: types.Message):
     # Регистрация хэндлерова
 def register_handlers_admin(dp : Dispatcher):
     dp.register_message_handler(make_changes_command, commands=['dailyinfo'])
+    dp.register_message_handler(cm_start, commands=['Допинфа'], state=None)
     dp.register_message_handler(load_tickers_names, state=None)
     # dp.register_message_handler(load_name, commands=['Введи название'], state=FSMAdmin.photo)
     dp.register_message_handler(load_photo, commands=['Загрузить фото'], state=None)
     # dp.register_message_handler(cancel_handler, state='*', commands='отмена')
-    # dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state='*') 
+    # dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state='*')
+    
+ 
