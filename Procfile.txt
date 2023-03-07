@@ -1,1 +1,1 @@
-worker: python market_bot_telegram.py
+worker: python3 market_bot_telegram.py
