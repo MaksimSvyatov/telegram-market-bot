@@ -1,1 +1,1 @@
-command: python3 marketbottelegram.py
+python main.py
