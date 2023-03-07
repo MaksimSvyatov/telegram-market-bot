@@ -1,1 +1,1 @@
-web: python3 marketbottelegram.py
+worker: python3 marketbottelegram.py
