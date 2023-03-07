@@ -1,1 +1,1 @@
-python market-telegram-bot.py
+python main.py
