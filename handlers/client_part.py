@@ -141,7 +141,7 @@ async def bot_message(message: types.Message):
             f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{ticker}.json"
         ).text
         url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
-        if data:
+        if type(data) == str:
             data = json.loads(data)
             print(data)
             ticker = message.text
