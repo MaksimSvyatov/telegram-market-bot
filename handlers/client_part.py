@@ -141,11 +141,11 @@ async def bot_message(message: types.Message):
             f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{ticker}.json"
         ).text
         url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
-        if type(data) == str:
-            data = json.loads(data)
-            print(data)
-            ticker = message.text
-            bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
+        data = json.loads(data)
+        print(data)
+        ticker = message.text
+        bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
+        try:
             data_list = data["marketdata"]["data"][0]
             bond_current_price = data_list[bond_current_price_index]
             await bot.send_message(
@@ -153,7 +153,7 @@ async def bot_message(message: types.Message):
                 f"Current bond price is {bond_current_price}",
                 reply_markup=nav.get_additional_info(ticker,url)
             )
-        else:
+        except:
             await bot.send_message(
                 message.from_user.id,
                 f"I don't now this ticker yet, but i'm still learn) Try another one.",
