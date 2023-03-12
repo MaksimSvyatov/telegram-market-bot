@@ -53,14 +53,20 @@ async def bot_message(message: types.Message):
         url = f'https://www.moex.com/en/issue.aspx?board=TQBR&code={ticker}'
         data = json.loads(data)
         share_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
-        data_list = data["marketdata"]["data"][0]
-        share_current_price = data_list[share_current_price_index]
-        
-        await bot.send_message(
-            message.from_user.id,
-            f"Current share price is {share_current_price}",
-            reply_markup=nav.get_additional_info(ticker,url)
-        )
+        try:
+            data_list = data["marketdata"]["data"][0]
+            share_current_price = data_list[share_current_price_index]
+            
+            await bot.send_message(
+                message.from_user.id,
+                f"Current share price is {share_current_price}",
+                reply_markup=nav.get_additional_info(ticker,url)
+            )
+        except:
+            await bot.send_message(
+                message.from_user.id,
+                f"I don't now this ticker yet, but i'm still learn) Try another one.",
+            )
         # await sqlite_db.sql_add_command(ticker,date)
         # print(ticker,date)
         # await sqlite_db.sql_read(message)
@@ -76,23 +82,17 @@ async def bot_message(message: types.Message):
             data_list = data["securities"]["data"][0]
             share_name = data_list[share_name_index]
             share_min_price_index = data["marketdata"]["columns"].index("LOW")
-            try:
-                data_list = data["marketdata"]["data"][0]
-                share_min_price = data_list[share_min_price_index]
-                share_max_price_index = data["marketdata"]["columns"].index("HIGH")
-                data_list = data["marketdata"]["data"][0]
-                share_max_price = data_list[share_max_price_index]
-                print(user_id)
-                await bot.send_message(
-                    chat_id=user_id, text = f"Share name: {share_name}, Min price: {share_min_price}, Max price: {share_max_price}"
-                )
-                await callback.answer()
-            except:
-                await bot.send_message(
-                    message.from_user.id,
-                    f"I don't now this ticker yet, but i'm still learn) Try another one.",
-                )
-                
+            data_list = data["marketdata"]["data"][0]
+            share_min_price = data_list[share_min_price_index]
+            share_max_price_index = data["marketdata"]["columns"].index("HIGH")
+            data_list = data["marketdata"]["data"][0]
+            share_max_price = data_list[share_max_price_index]
+            print(user_id)
+            await bot.send_message(
+                chat_id=user_id, text = f"Share name: {share_name}, Min price: {share_min_price}, Max price: {share_max_price}"
+            )
+            await callback.answer()
+
         @dp.callback_query_handler(text=f"get_link_for_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
             # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
@@ -106,13 +106,19 @@ async def bot_message(message: types.Message):
         url = f'https://www.moex.com/ru/issue.aspx?code={ticker}'
         data = json.loads(data)
         bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
-        data_list = data["marketdata"]["data"][0]
-        bond_current_price = data_list[bond_current_price_index]
-        await bot.send_message(
-            message.from_user.id,
-            f"Current bond price is {bond_current_price}",
-            reply_markup=nav.get_additional_info(ticker,url)
-        )
+        try:
+            data_list = data["marketdata"]["data"][0]
+            bond_current_price = data_list[bond_current_price_index]
+            await bot.send_message(
+                message.from_user.id,
+                f"Current bond price is {bond_current_price}",
+                reply_markup=nav.get_additional_info(ticker,url)
+            )
+        except:
+            await bot.send_message(
+                message.from_user.id,
+                f"I don't now this ticker yet, but i'm still learn) Try another one.",
+            )
 
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
@@ -122,25 +128,19 @@ async def bot_message(message: types.Message):
             
             data = json.loads(additional_bondSU_data)
             bond_name_index = data["securities"]["columns"].index("SECNAME")
-            try:
-                data_list = data["securities"]["data"][0]
-                bond_name = data_list[bond_name_index]
-                bond_min_price_index = data["marketdata"]["columns"].index("LOW")
-                data_list = data["marketdata"]["data"][0]
-                bond_min_price = data_list[bond_min_price_index]
-                bond_max_price_index = data["marketdata"]["columns"].index("HIGH")
-                data_list = data["marketdata"]["data"][0]
-                bond_max_price = data_list[bond_max_price_index]
-                await bot.send_message(
-                    message.from_user.id,
-                    f"Bond name: {bond_name}, Min price: {bond_min_price}, Max price: {bond_max_price}",
-                )
-                await callback.answer()
-            except:
-                await bot.send_message(
-                    message.from_user.id,
-                    f"I don't now this ticker yet, but i'm still learn) Try another one.",
-                )
+            data_list = data["securities"]["data"][0]
+            bond_name = data_list[bond_name_index]
+            bond_min_price_index = data["marketdata"]["columns"].index("LOW")
+            data_list = data["marketdata"]["data"][0]
+            bond_min_price = data_list[bond_min_price_index]
+            bond_max_price_index = data["marketdata"]["columns"].index("HIGH")
+            data_list = data["marketdata"]["data"][0]
+            bond_max_price = data_list[bond_max_price_index]
+            await bot.send_message(
+                message.from_user.id,
+                f"Bond name: {bond_name}, Min price: {bond_min_price}, Max price: {bond_max_price}",
+            )
+            await callback.answer()
 
         @dp.callback_query_handler(text=f"get_link_for_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
