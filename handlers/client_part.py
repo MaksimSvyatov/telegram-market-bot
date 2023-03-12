@@ -92,7 +92,7 @@ async def bot_message(message: types.Message):
             # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
             
-    if message.text.startswith("SU"):
+    elif message.text.startswith("SU"):
         ticker = message.text
         data = requests.get(
             f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/{ticker}.json"
@@ -135,7 +135,7 @@ async def bot_message(message: types.Message):
             # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
 
-    if message.text.startswith("RU"):
+    elif message.text.startswith("RU"):
         ticker = message.text
         print(ticker)
         data = requests.get(
@@ -180,6 +180,11 @@ async def bot_message(message: types.Message):
             await callback.answer()
 
         # await sqlite_db.sql_add_command(ticker)
+    else:
+        await bot.send_message(
+                message.from_user.id,
+                f"I don't now this ticker yet, but i'm still learn) Try another one.",
+            )
         
 @dp.message_handler(commands=['Get stat from data base'])
 async def get_stat_from_data_base(message : types.Message):
