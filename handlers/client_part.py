@@ -141,17 +141,24 @@ async def bot_message(message: types.Message):
             f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{ticker}.json"
         ).text
         url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
-        data = json.loads(data)
-        print(data)
-        ticker = message.text
-        bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
-        data_list = data["marketdata"]["data"][0]
-        bond_current_price = data_list[bond_current_price_index]
-        await bot.send_message(
-            message.from_user.id,
-            f"Current bond price is {bond_current_price}",
-            reply_markup=nav.get_additional_info(ticker,url)
-        )
+        if data:
+            data = json.loads(data)
+            print(data)
+            ticker = message.text
+            bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
+            data_list = data["marketdata"]["data"][0]
+            bond_current_price = data_list[bond_current_price_index]
+            await bot.send_message(
+                message.from_user.id,
+                f"Current bond price is {bond_current_price}",
+                reply_markup=nav.get_additional_info(ticker,url)
+            )
+        else:
+            await bot.send_message(
+                message.from_user.id,
+                f"I don't now this ticker yet, but i'm still learn) Try another one.",
+            )
+
 
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
@@ -180,11 +187,6 @@ async def bot_message(message: types.Message):
             await callback.answer()
 
         # await sqlite_db.sql_add_command(ticker)
-    else:
-        await bot.send_message(
-                message.from_user.id,
-                f"I don't now this ticker yet, but i'm still learn) Try another one.",
-            )
         
 @dp.message_handler(commands=['Get stat from data base'])
 async def get_stat_from_data_base(message : types.Message):
