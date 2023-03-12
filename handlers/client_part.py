@@ -139,9 +139,9 @@ async def bot_message(message: types.Message):
         print(ticker)
         ticker = message.text
         data = requests.get(
-            f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{ticker}.json"
+            f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQIF/securities/{ticker}.json"
         ).text
-        url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
+        url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQIF'
         data = json.loads(data)
         ticker = message.text
         bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
