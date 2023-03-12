@@ -136,6 +136,7 @@ async def bot_message(message: types.Message):
             await callback.answer()
 
     if message.text.startswith("RU"):
+        print(ticker)
         ticker = message.text
         data = requests.get(
             f"https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities/{ticker}.json"
