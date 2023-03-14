@@ -4,7 +4,7 @@ def greeting ():
     print('This is notification')
 
 def get_notification():
-    schedule.every().day.at('16:00').do(greeting)
+    schedule.every().day.at('16:10').do(greeting)
     
     while True:
         schedule.run_pending()
