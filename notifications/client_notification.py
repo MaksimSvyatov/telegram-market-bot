@@ -1,6 +1,6 @@
 import schedule
 
-def greeting ():
+def greeting():
     print('This is notification')
 
 def get_notification():
