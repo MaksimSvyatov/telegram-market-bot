@@ -15,7 +15,7 @@ async def daily_job():
         # try:
     data_list = data["marketdata"]["data"][0]
     share_current_price = data_list[share_current_price_index]
-    message = f"1Current share price is {share_current_price} {datetime.now()}"
+    message = f"11-00 Current share price is {share_current_price} {datetime.now()}"
     await bot.send_message(chat_id=99117096, text=message)
 
 scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
