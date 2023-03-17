@@ -19,7 +19,7 @@ async def daily_job():
     await bot.send_message(chat_id=99117096, text=message)
 
 scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
-scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '14', minute = '45')
+scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '10', minute = '00')
 
 scheduler.start()
 
