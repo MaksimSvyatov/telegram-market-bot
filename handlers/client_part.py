@@ -154,7 +154,7 @@ async def bot_message(message: types.Message):
         ).text
         url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
         data = json.loads(data)
-        print(data)
+        # pri÷nt(data)
         ticker = message.text
         bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
         try:
