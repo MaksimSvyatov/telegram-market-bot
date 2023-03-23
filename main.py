@@ -7,6 +7,7 @@ from notifications import client_notification
 async def on_startup(_):
     print("Bot is online")
     sqlite_db.sql_start()
+    # sqlite_db.sql_read()
     # client_notification.greeting()
 
 client_part.register_handlers_client(dp)

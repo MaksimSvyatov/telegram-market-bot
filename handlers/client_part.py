@@ -16,6 +16,8 @@ async def command_start(message: types.Message):
             "Привет. Я market-bot). Ведите тикер акции или облигации для получения информации",
             reply_markup = ReplyKeyboardRemove()
         )
+        # await sqlite_db.sql_read()
+
 
     except:
         await message.reply(
