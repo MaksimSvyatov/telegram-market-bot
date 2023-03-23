@@ -4,8 +4,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from data_base import sqlite_db
 import requests
 import json
-from asgiref.sync import async_to_sync
-import asyncio
+# from asgiref.sync import async_to_sync
+# import asyncio
 
 notification = 0
 async def daily_job():
