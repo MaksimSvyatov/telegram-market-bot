@@ -55,7 +55,7 @@ async def daily_job():
 # tickers = asyncio.run(sqlite_db.fetch_one_item())
 # print(tickers)
 scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
-scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '09', minute = '00')
+scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '09', minute = '30')
 scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '17', minute = '45')
 
 
