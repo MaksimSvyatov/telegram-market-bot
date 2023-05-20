@@ -4,17 +4,12 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from data_base import sqlite_db
 import requests
 import json
-# from asgiref.sync import async_to_sync
-# import asyncio
+import asyncio
 
-notification = 0
 async def daily_job():
-    global notification
     data_base = await sqlite_db.sql_read()
-    # print(type(data_base[0]))
     data_base_tuple = data_base[0]
     data_base_list = list(data_base_tuple)
-    # print(data_base_list[0][0])
     ticker_from_data_base = []
     quantity_from_data_base = []
     time_from_data_base = []
@@ -29,16 +24,11 @@ async def daily_job():
     print(time_from_data_base)
     ticker_from_data_base = ticker_from_data_base[0]
     quantity_from_data_base = quantity_from_data_base[0]
-    notification = time_from_data_base
-    notification = 15
-    print(type(notification))
-    print(f'notification is {notification}')
 
     for ticker in ticker_from_data_base:
         data = requests.get(
                 f"https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}.json"
         ).text
-            # url = f'https://www.moex.com/en/issue.aspx?board=TQBR&code={ticker}'
         data = json.loads(data)
         share_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
         try:
@@ -51,13 +41,10 @@ async def daily_job():
                 message.from_user.id,
                 f"I don't now ticker {ticker} yet, but i'm still learn) Try another one.",
             )
-    return notification
-# tickers = asyncio.run(sqlite_db.fetch_one_item())
-# print(tickers)
-scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
-scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '09', minute = '30')
-scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '17', minute = '45')
 
+scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
+scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '10', minute = '30')
+scheduler.add_job(daily_job, trigger='cron', day_of_week = '*', hour = '17', minute = '45')
 
 scheduler.start()
 
