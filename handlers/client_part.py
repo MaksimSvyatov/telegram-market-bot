@@ -6,7 +6,6 @@ import requests
 import json
 from data_base import sqlite_db
 from datetime import datetime
-# from handlers import for_regular_info
 
 # @dp.message_handler(commands=["start", "help"])
 async def command_start(message: types.Message):
@@ -16,32 +15,12 @@ async def command_start(message: types.Message):
             "Привет. Я market-bot). Ведите тикер акции или облигации для получения информации",
             reply_markup = ReplyKeyboardRemove()
         )
-        # await sqlite_db.sql_read()
-
 
     except:
         await message.reply(
             "Напишите боту в ЛС, напишите ему: \nhttps://t.me/Investment_FollowUp_bot"
         )
-    # await for_regular_info.get_daily_info(message)
-
-# @dp.message_handler(commands=["start", "help"])
-# async def input_tickers(message: types.Message):
-#     await bot.send_message(
-#             message.from_user.id,
-#             f"Enter tickers with ,"
-#         )
-#     print(message)
-        # async def input_tickers(message: types.Message):
-        #     await bot.send_message(
-        #     message.from_user.id,
-        #     f"Enter tickers with ,"
-        #     )
-        #     print(message.text)
-        # await input_tickers(message)
-
-
-
+    
 # @dp.message_handler()
 async def bot_message(message: types.Message):
     await bot.send_message(message.from_user.id, message.text)
@@ -69,9 +48,6 @@ async def bot_message(message: types.Message):
                 message.from_user.id,
                 f"I don't now this ticker yet, but i'm still learn) Try another one.",
             )
-        # await sqlite_db.sql_add_command(ticker,date)
-        # print(ticker,date)
-        # await sqlite_db.sql_read(message)
         
         @dp.callback_query_handler(text=f"get_add_info_about_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
@@ -97,7 +73,6 @@ async def bot_message(message: types.Message):
 
         @dp.callback_query_handler(text=f"get_link_for_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
-            # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
             
     elif message.text.startswith("SU"):
@@ -146,7 +121,6 @@ async def bot_message(message: types.Message):
 
         @dp.callback_query_handler(text=f"get_link_for_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
-            # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
 
     elif message.text.startswith("RU"):
@@ -156,7 +130,6 @@ async def bot_message(message: types.Message):
         ).text
         url = f'https://www.moex.com/ru/issue.aspx?code={ticker}&board=TQCB'
         data = json.loads(data)
-        # pri÷nt(data)
         ticker = message.text
         bond_current_price_index = data["marketdata"]["columns"].index("LCURRENTPRICE")
         try:
@@ -197,15 +170,12 @@ async def bot_message(message: types.Message):
             
         @dp.callback_query_handler(text=f"get_link_for_{ticker}")
         async def get_add_info(callback: types.CallbackQuery):
-            # url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}"
             await callback.answer()
 
-        # await sqlite_db.sql_add_command(ticker)
         
 @dp.message_handler(commands=['Get stat from data base'])
 async def get_stat_from_data_base(message : types.Message):
     await sqlite_db.sql_read(message)
-    print('From def')
     
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(command_start, commands=["start", "help"])
